@@ -9,7 +9,7 @@ DOCTYPE = "Test Api"
 # =====================================================================
 # 1. CREATE API
 # =====================================================================
-@frappe.whitelist(methods=["POST"])
+@frappe.whitelist(methods=["POST"], allow_guest=True)
 def create_test_api(name1=None, email=None):
     """
     Creates a new 'Test Api' record.
@@ -37,10 +37,6 @@ def create_test_api(name1=None, email=None):
     if email:
         validate_email_address(email, throw=True)
 
-    # Permission check for creation
-    if not frappe.has_permission(DOCTYPE, ptype="create"):
-        frappe.throw(_("Not permitted to create {0}").format(DOCTYPE), frappe.PermissionError)
-
     # Create and insert document
     doc = frappe.get_doc({
         "doctype": DOCTYPE,
@@ -59,7 +55,7 @@ def create_test_api(name1=None, email=None):
 # ==================================================================
 # 2. GET SINGLE API
 # ==================================================================
-@frappe.whitelist(methods=["GET"])
+@frappe.whitelist(methods=["GET"], allow_guest=True)
 def get_test_api(name):
     """
     Retrieves a single 'Test Api' document by ID/name.
@@ -78,9 +74,6 @@ def get_test_api(name):
 
     doc = frappe.get_doc(DOCTYPE, name)
 
-    # Permission check for reading
-    doc.check_permission("read")
-
     return {
         "status": "success",
         "data": doc.as_dict()
@@ -90,7 +83,7 @@ def get_test_api(name):
 # =====================================================================
 # 3. GET ALL API
 # =====================================================================
-@frappe.whitelist(methods=["GET"])
+@frappe.whitelist(methods=["GET"], allow_guest=True)
 def get_all_test_api(fields=None, filters=None, limit_start=0, limit_page_length=50, order_by="modified desc"):
     """
     Retrieves a list of 'Test Api' records with pagination and filtering support.
@@ -102,10 +95,6 @@ def get_all_test_api(fields=None, filters=None, limit_start=0, limit_page_length
         limit_page_length (int): Page length (default: 50)
         order_by (str): Sort order (default: "modified desc")
     """
-    # Permission check for reading
-    if not frappe.has_permission(DOCTYPE, ptype="read"):
-        frappe.throw(_("Not permitted to read {0}").format(DOCTYPE), frappe.PermissionError)
-
     # Parse JSON strings if passed as URL parameters
     if isinstance(fields, str):
         try:
