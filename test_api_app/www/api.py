@@ -130,3 +130,7 @@ def get_all_test_api(fields=None, filters=None, limit_start=0, limit_page_length
         "limit_page_length": int(limit_page_length or 50),
         "data": records
     }
+
+@frappe.whitelist(methods=["GET"], allow_guest=True)
+def get_cost_centers_list(filters=None):
+    return frappe.get_list("Cost Center", filters=filters, fields="name")
